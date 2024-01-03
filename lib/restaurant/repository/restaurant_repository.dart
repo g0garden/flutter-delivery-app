@@ -16,7 +16,7 @@ abstract class RestaurantRepository {
   // paginate();
 
   @GET('/{id}') //http://$ip/restaurant/:id
-  @Headers({'authorization': "Bearer postman에서 발급받은 토큰 값"})
+  @Headers({'accessToken': 'true'})
   Future<RestaurantDetailModel> getRestaurantDetail({
     @Path('id') required String rid, //rid는 id와 매핑
   });
