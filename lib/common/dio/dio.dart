@@ -12,7 +12,6 @@ class CustomInterceptor extends Interceptor {
   // 만약 요청의 header에 'accessToken': 'true'라는 값이 있으면
   // storage의 실제 토큰을 'authorization': 'Bearer $token'으로 헤더를 변경한다.
   // 왜?? 매번 모든 토큰이 필요한 요청의 repo에 다 넣어줄 수 없으니까
-
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
@@ -41,7 +40,14 @@ class CustomInterceptor extends Interceptor {
     //진짜 요청시작!
     return super.onRequest(options, handler);
   }
-//2) 응답받을때
+
+  //2) 응답받을때
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    // print(
+    //     '[RESPONSE] [${response.requestOptions.method} ${response.requestOptions.uri}]');
+    return super.onResponse(response, handler);
+  }
 
   //3) 에러났을때
   @override
@@ -49,7 +55,7 @@ class CustomInterceptor extends Interceptor {
     // 401 에러 (만료되거나)
     //토큰을 재발급 받는 시도를 하고 토큰이 재발급되면
     //다시 새로운 토큰으로 요청을 한다.
-    print('[ERROR] [${err.requestOptions.method} ${err.requestOptions.uri}]');
+    //print('[ERROR] [${err.requestOptions.method} ${err.requestOptions.uri}]');
 
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
 
