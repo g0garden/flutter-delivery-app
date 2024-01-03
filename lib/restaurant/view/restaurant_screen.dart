@@ -10,7 +10,7 @@ import 'package:flutter_delivery_app/restaurant/view/restaurant_detail_screen.da
 class RestaurantScreen extends StatelessWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
 
-  Future<List> paginationRestaurant() async {
+  Future<List> paginateRestaurant() async {
     final dio = Dio();
 
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
@@ -28,7 +28,7 @@ class RestaurantScreen extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: FutureBuilder(
-                    future: paginationRestaurant(),
+                    future: paginateRestaurant(),
                     builder: (context, AsyncSnapshot<List> snapshot) {
                       // print(snapshot.error);
                       // print(snapshot.data);
