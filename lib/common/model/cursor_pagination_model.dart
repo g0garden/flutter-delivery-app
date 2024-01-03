@@ -3,17 +3,17 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'cursor_pagination_model.g.dart';
 
-@JsonSerializable()
-class CursorPagination {
+@JsonSerializable(genericArgumentFactories: true)
+class CursorPagination<T> {
   final CursorPaginationMeta meta;
-  final List<RestaurantModel> data; //이러면 레스토랑모델 타입만 받으니까 다른 pagination할때는?!
+  final List<T> data;
+  //final List<RestaurantModel> data; //이러면 레스토랑모델 타입만 받으니까 다른 pagination할때는?!
 
   CursorPagination({required this.meta, required this.data});
 
   factory CursorPagination.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      _$CursorPaginationFromJson(json);
+          Map<String, dynamic> json, T Function(Object? json) fromJsonT) =>
+      _$CursorPaginationFromJson(json, fromJsonT);
 }
 
 @JsonSerializable()
