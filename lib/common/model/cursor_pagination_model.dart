@@ -44,7 +44,7 @@ class CursorPaginationMeta {
 }
 
 //새로 고침하기(즉, 이미 데이터 받아왔고 그 후에 다시 새로고침하는 경우)
-class CursorPaginationRefetching extends CursorPagination {
+class CursorPaginationRefetching<T> extends CursorPagination {
   //CursorPaginationRefetching는 CursorPagination을 상속하고, (instance is CursorPagination)
   //CursorPagination이 상속한 CursorPaginationBase도 상속한다. (instance is CursorPaginationBase)
   CursorPaginationRefetching({
@@ -54,7 +54,7 @@ class CursorPaginationRefetching extends CursorPagination {
 }
 
 //리스트의 맨 아래로 내려서 추가 데이터 요청중일떄
-class CursorPaginationFetchingMore extends CursorPagination {
+class CursorPaginationFetchingMore<T> extends CursorPagination {
   CursorPaginationFetchingMore({
     required super.meta,
     required super.data,
