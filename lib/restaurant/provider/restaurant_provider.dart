@@ -36,69 +36,91 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
     //걍 다시 시작, true - CursorPaginationLoading부터시작
     bool forceRefetch = false,
   }) async {
-    //5가지 가능성 = 상태의 5가지 상태
+    try {
+      //5가지 가능성 = 상태의 5가지 상태
 
-    //1) CursorPagination - 정상적으로 데이터 있는 상태
-    //2) CursorPaginationLoading - 데이터가 로딩중인 상태(현재 캐시 없음)
-    //3) CursorPaginationError - 에러있을 때
-    //4) CursorPaginationRefetching - 첫번째 페이지부터 다시 데이터 가져올때
-    //5) CursorPaginationFetchMore - 추가 데이터를 paginate해오라는 요청 받았을때
+      //1) CursorPagination - 정상적으로 데이터 있는 상태
+      //2) CursorPaginationLoading - 데이터가 로딩중인 상태(현재 캐시 없음)
+      //3) CursorPaginationError - 에러있을 때
+      //4) CursorPaginationRefetching - 첫번째 페이지부터 다시 데이터 가져올때
+      //5) CursorPaginationFetchMore - 추가 데이터를 paginate해오라는 요청 받았을때
 
-    //바로 반환하는 상황부터 코딩해보자
-    //1) hasMore = false(기존상태에서 더 가져올거 없음)
-    //2) 로딩중 - fetchMore : true (이미 로딩중 = 가져오고 있는데, 또 요청해? 그럼 같은거 또 들고올수있자나)
-    //   로딩중 - fetchMore : false (이미 로딩중 = 가져오고 있는데, 더 fetch를 요청하는게 아니라 다른 요청? => 그냥 위로가서 새로고침하는걸 수 있음. 그럼해야지)
+      //바로 반환하는 상황부터 코딩해보자
+      //1) hasMore = false(기존상태에서 더 가져올거 없음)
+      //2) 로딩중 - fetchMore : true (이미 로딩중 = 가져오고 있는데, 또 요청해? 그럼 같은거 또 들고올수있자나)
+      //   로딩중 - fetchMore : false (이미 로딩중 = 가져오고 있는데, 더 fetch를 요청하는게 아니라 다른 요청? => 그냥 위로가서 새로고침하는걸 수 있음. 그럼해야지)
 
-    if (state is CursorPagination && !forceRefetch) {
-      //우리가 애초에 CursorPaginationBase 타입을 받으니까,
-      //state는 CursorPagination 라고 명시해줘여함.
-      final pState = state as CursorPagination;
+      if (state is CursorPagination && !forceRefetch) {
+        //우리가 애초에 CursorPaginationBase 타입을 받으니까,
+        //state는 CursorPagination 라고 명시해줘여함.
+        final pState = state as CursorPagination;
 
-      if (!pState.meta.hasMore) {
+        if (!pState.meta.hasMore) {
+          return;
+        }
+      }
+
+      final isLoading = state is CursorPaginationLaoding;
+      final isRefetching = state is CursorPaginationRefetching;
+      final isFetchingMore = state is CursorPaginationFetchingMore;
+
+      if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
         return;
       }
-    }
 
-    final isLoading = state is CursorPaginationLaoding;
-    final isRefetching = state is CursorPaginationRefetching;
-    final isFetchingMore = state is CursorPaginationFetchingMore;
+      //PaginationParams 생성
+      PaginationParams paginationParams = PaginationParams(count: fetchCount);
 
-    if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
-      return;
-    }
+      //fetch more 데이터 추가로 더 가져오기~
+      if (fetchMore) {
+        //fetchMore가 true라는 거 자체가 CursorPagination의 data가 있다는 거니까, 100프로 확신하니까 casting하는 거임
+        //state는 CursorPagination의 인스턴스이다.
+        final pState = state as CursorPagination;
 
-    //PaginationParams 생성
-    PaginationParams paginationParams = PaginationParams(count: fetchCount);
+        state = CursorPaginationFetchingMore(
+          meta: pState.meta,
+          data: pState.data,
+        );
 
-    //fetch more 데이터 추가로 더 가져오기~
-    if (fetchMore) {
-      //fetchMore가 true라는 거 자체가 CursorPagination의 data가 있다는 거니까, 100프로 확신하니까 casting하는 거임
-      //state는 CursorPagination의 인스턴스이다.
-      final pState = state as CursorPagination;
+        paginationParams = paginationParams.copyWith(
+          after: pState.data.last.id,
+        );
+      } else {
+        //데이터 처음부터 가져오는 상황
+        //만약 데이터 있는상황이며느 기존 데이터는 보존한채로 Fetch(API 요청) 진행
+        if (state is CursorPagination && !forceRefetch) {
+          final pState = state as CursorPagination;
 
-      state = CursorPaginationFetchingMore(
-        meta: pState.meta,
-        data: pState.data,
+          state = CursorPaginationRefetching(
+            meta: pState.meta,
+            data: pState.data,
+          );
+        } else {
+          state = CursorPaginationLaoding();
+        }
+      }
+
+      //가장 최신 데이터
+      final resp = await repository.paginate(
+        paginationParams: paginationParams,
       );
 
-      paginationParams = paginationParams.copyWith(
-        after: pState.data.last.id,
+      if (state is CursorPaginationFetchingMore) {
+        final pState = state as CursorPaginationFetchingMore;
+
+        //기존 데이터 + 방금 추가로 받아온 최신데이터 합쳐주기
+        state = resp.copyWith(data: [
+          ...pState.data,
+          ...resp.data,
+        ]);
+      } else {
+        //처음 20개
+        state = resp;
+      }
+    } catch (e) {
+      state = CursorPaginationError(
+        message: '데이터를 가져오지 못했습니다.',
       );
-    }
-
-    //가장 최신 데이터
-    final resp = await repository.paginate(
-      paginationParams: paginationParams,
-    );
-
-    if (state is CursorPaginationFetchingMore) {
-      final pState = state as CursorPaginationFetchingMore;
-
-      //기존 데이터 + 방금 추가로 받아온 최신데이터 합쳐주기
-      state = resp.copyWith(data: [
-        ...pState.data,
-        ...resp.data,
-      ]);
     }
   }
 }
