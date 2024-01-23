@@ -2,6 +2,20 @@ import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+//2. StateNotifier Provider에 연결
+final restaurantProvider =
+    StateNotifierProvider<RestaurantStateNotifier, List<RestaurantModel>>(
+        (ref) {
+  final repository = ref.watch(restaurantRepositoryProvider);
+
+  final notifier = RestaurantStateNotifier(
+    repository: repository,
+  );
+
+  return notifier;
+});
+
+//1. StateNotifier 생성
 class RestaurantStateNotifier extends StateNotifier<List<RestaurantModel>> {
   final RestaurantRepository repository;
 
