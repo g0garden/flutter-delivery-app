@@ -16,8 +16,7 @@ class RestaurantScreen extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    //TODO
-
+    //TODO : 임시!
     final cp = data as CursorPagination;
 
     return Padding(

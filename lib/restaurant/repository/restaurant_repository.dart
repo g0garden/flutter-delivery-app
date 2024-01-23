@@ -32,7 +32,8 @@ abstract class RestaurantRepository {
     'accessToken': 'true',
   })
   Future<CursorPagination<RestaurantModel>> paginate({
-    PaginationParams? paginationParams = const PaginationParams(),
+    //retrofit에서 쿼리추가하기
+    @Queries() PaginationParams? paginationParams = const PaginationParams(),
   });
   //최고다... 그럼 이제 CursorPagination한테 내가 쓸 모델 타입만 잘 넘겨주면, pagination 할 때 필요한 값까지 다 오케이..
   //이래서 common폴더에 들어갔구만
