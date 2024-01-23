@@ -4,20 +4,24 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/common/const/data.dart';
 import 'package:flutter_delivery_app/common/dio/dio.dart';
+import 'package:flutter_delivery_app/common/secure_storage/secure_storage.dart';
 import 'package:flutter_delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_delivery_app/restaurant/view/restaurant_detail_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RestaurantScreen extends StatelessWidget {
+class RestaurantScreen extends ConsumerWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
 
-  Future<List<RestaurantModel>> paginateRestaurant() async {
-    final dio = Dio();
+  Future<List<RestaurantModel>> paginateRestaurant(WidgetRef ref) async {
+    // final dio = Dio();
 
-    dio.interceptors.add(CustomInterceptor(storage: storage));
+    // dio.interceptors.add(CustomInterceptor(storage: storage));
 
-    final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
+    final dio = ref.watch(dioProvider);
+
+    //final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
     final resp =
         await RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant')
@@ -27,13 +31,13 @@ class RestaurantScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
         child: Center(
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: FutureBuilder<List<RestaurantModel>>(
-                    future: paginateRestaurant(),
+                    future: paginateRestaurant(ref),
                     builder: (context,
                         AsyncSnapshot<List<RestaurantModel>> snapshot) {
                       if (!snapshot.hasData) {
