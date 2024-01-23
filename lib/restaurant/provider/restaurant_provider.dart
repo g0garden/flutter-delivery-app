@@ -46,7 +46,7 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
     //바로 반환하는 상황부터 코딩해보자
     //1) hasMore = false(기존상태에서 더 가져올거 없음)
     //2) 로딩중 - fetchMore : true (이미 로딩중 = 가져오고 있는데, 또 요청해? 그럼 같은거 또 들고올수있자나)
-    //3) 로딩중 - fetchMore : false (이미 로딩중 = 가져오고 있는데, 더 fetch를 요청하는게 아니라 다른 요청? => 그냥 위로가서 새로고침하는걸 수 있음. 그럼해야지)
+    //   로딩중 - fetchMore : false (이미 로딩중 = 가져오고 있는데, 더 fetch를 요청하는게 아니라 다른 요청? => 그냥 위로가서 새로고침하는걸 수 있음. 그럼해야지)
 
     if (state is CursorPagination && !forceRefetch) {
       //우리가 애초에 CursorPaginationBase 타입을 받으니까,
@@ -56,6 +56,14 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
       if (!pState.meta.hasMore) {
         return;
       }
+    }
+
+    final isLoading = state is CursorPaginationLaoding;
+    final isRefetching = state is CursorPaginationRefetching;
+    final isFetchingMore = state is CursorPaginationFetchingMore;
+
+    if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
+      return;
     }
   }
 }
