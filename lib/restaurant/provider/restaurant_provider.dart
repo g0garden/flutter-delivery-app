@@ -4,6 +4,19 @@ import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+//반환하는 값은 RestaurantModel, family로 입력하는 값은 레스토랑 id
+final restaurantDetailProvider =
+    Provider.family<RestaurantModel?, String>((ref, id) {
+  final state = ref.watch(restaurantProvider);
+
+  if (state is! CursorPagination<RestaurantModel>) {
+    //CursorPagination아니라는 것은 state(restaurantProvider)에 데이터 없음
+    return null;
+  }
+
+  return state.data.firstWhere((element) => element.id == id);
+});
+
 //2. StateNotifier Provider에 연결
 final restaurantProvider =
     StateNotifierProvider<RestaurantStateNotifier, CursorPaginationBase>((ref) {
