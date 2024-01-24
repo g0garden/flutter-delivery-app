@@ -21,6 +21,7 @@ dependencies:
   retrofit: '>=4.0.0 <5.0.0'
   logger: any
   json_annotation: ^4.8.0
+  skeletons: ^0.0.3
 
 dev_dependencies:
   flutter_test:
