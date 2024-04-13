@@ -1,10 +1,11 @@
+import 'package:flutter_delivery_app/common/model/model_with_id.dart';
 import 'package:flutter_delivery_app/common/utils/data_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
-class UserModel {
+class UserModel implements IModelWithId {
   final String id;
   final String username;
   @JsonKey(

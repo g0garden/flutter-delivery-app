@@ -1,4 +1,5 @@
 import 'package:flutter_delivery_app/common/const/data.dart';
+import 'package:flutter_delivery_app/common/model/model_with_id.dart';
 import 'package:flutter_delivery_app/common/utils/data_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'restaurant_model.g.dart';
@@ -6,7 +7,7 @@ part 'restaurant_model.g.dart';
 enum RestaurantPriceRange { expensive, medium, cheap }
 
 @JsonSerializable()
-class RestaurantModel {
+class RestaurantModel implements IModelWithId {
   //model의 속성들에 대한 정의, API에서 받아올 값들 정의
   final String id;
   final String name;

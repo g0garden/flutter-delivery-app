@@ -1,10 +1,12 @@
 import 'package:flutter_delivery_app/common/model/cursor_pagination_model.dart';
+import 'package:flutter_delivery_app/common/model/model_with_id.dart';
 import 'package:flutter_delivery_app/common/model/pagination_params.dart';
 import 'package:flutter_delivery_app/common/repository/base_paginatioin_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //다트에서 Generic 타입은 implements 못씀 그래서 extends
-class PaginationProvider<U extends IBasePaginationRepository>
+class PaginationProvider<T extends IModelWithId,
+        U extends IBasePaginationRepository<T>>
     extends StateNotifier<CursorPaginationBase> {
   final U repository;
 
@@ -58,9 +60,9 @@ class PaginationProvider<U extends IBasePaginationRepository>
       if (fetchMore) {
         //fetchMore가 true라는 거 자체가 CursorPagination의 data가 있다는 거니까, 100프로 확신하니까 casting하는 거임
         //state는 CursorPagination의 인스턴스이다.
-        final pState = state as CursorPagination;
+        final pState = state as CursorPagination<T>;
 
-        state = CursorPaginationFetchingMore(
+        state = CursorPaginationFetchingMore<T>(
           meta: pState.meta,
           data: pState.data,
         );
@@ -70,11 +72,11 @@ class PaginationProvider<U extends IBasePaginationRepository>
         );
       } else {
         //데이터 처음부터 가져오는 상황
-        //만약 데이터 있는상황이며느 기존 데이터는 보존한채로 Fetch(API 요청) 진행
+        //만약 데이터 있는상황이면 기존 데이터는 보존한채로 Fetch(API 요청) 진행
         if (state is CursorPagination && !forceRefetch) {
-          final pState = state as CursorPagination;
+          final pState = state as CursorPagination<T>;
 
-          state = CursorPaginationRefetching(
+          state = CursorPaginationRefetching<T>(
             meta: pState.meta,
             data: pState.data,
           );
@@ -89,7 +91,7 @@ class PaginationProvider<U extends IBasePaginationRepository>
       );
 
       if (state is CursorPaginationFetchingMore) {
-        final pState = state as CursorPaginationFetchingMore;
+        final pState = state as CursorPaginationFetchingMore<T>;
 
         //기존 데이터 + 방금 추가로 받아온 최신데이터 합쳐주기
         state = resp.copyWith(data: [
