@@ -4,4 +4,8 @@ class DataUtils {
   static pathToThumbUrl(String value) {
     return 'http://$ip${value}';
   }
+
+  static listPathsToUrls(List<String> paths) {
+    return paths.map((e) => pathToThumbUrl(e).toList);
+  }
 }
