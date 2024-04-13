@@ -3,6 +3,7 @@ import 'package:flutter_delivery_app/common/const/data.dart';
 import 'package:flutter_delivery_app/common/dio/dio.dart';
 import 'package:flutter_delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:flutter_delivery_app/common/model/pagination_params.dart';
+import 'package:flutter_delivery_app/common/repository/base_paginatioin_repository.dart';
 import 'package:flutter_delivery_app/restaurant/model/restaurant_detail_model.dart';
 import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +22,8 @@ final restaurantRepositoryProvider = Provider<RestaurantRepository>((ref) {
 });
 
 @RestApi()
-abstract class RestaurantRepository {
+abstract class RestaurantRepository
+    implements IBasePaginationRepository<RestaurantModel> {
   //http://$ip/restaurant
   //왜 dio를 받아오냐면 =>
   factory RestaurantRepository(Dio dio, {String baseUrl}) =
