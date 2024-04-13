@@ -4,7 +4,7 @@ import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-//반환하는 값은 RestaurantModel, family로 입력하는 값은 레스토랑 id
+//우리가 받을 값은 RestaurantModel, family로 입력하는 값은 레스토랑 id
 final restaurantDetailProvider =
     Provider.family<RestaurantModel?, String>((ref, id) {
   final state = ref.watch(restaurantProvider);
@@ -144,7 +144,7 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
     //만약에 아직 데이터가 하나도 없는 상태라면 (CursorPagination이 아니라면)
     //데이터를 가져오는 시도를 한다.
     if (state is! CursorPagination) {
-      await this.paginate();
+      await paginate();
     }
 
     //state가 Cursorpagination이 아닐때 그냥 리턴
