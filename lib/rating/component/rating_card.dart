@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_delivery_app/common/const/colors.dart';
 
 import 'package:collection/collection.dart';
+import 'package:flutter_delivery_app/rating/model/rating_model.dart';
 
 class RatingCard extends StatelessWidget {
   //Network
@@ -27,6 +28,16 @@ class RatingCard extends StatelessWidget {
     required this.content,
     super.key,
   });
+
+  factory RatingCard.fromModel({required RatingModel model}) {
+    return RatingCard(
+      avatarImage: NetworkImage(model.user.imageUrl),
+      images: model.imgUrls.map((e) => Image.network(e)).toList(),
+      rating: model.rating,
+      email: model.user.username,
+      content: model.content,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

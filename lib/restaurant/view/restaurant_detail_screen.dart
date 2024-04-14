@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_delivery_app/common/layout/default_layout.dart';
+import 'package:flutter_delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:flutter_delivery_app/product/component/product_card.dart';
 import 'package:flutter_delivery_app/rating/component/rating_card.dart';
+import 'package:flutter_delivery_app/rating/model/rating_model.dart';
 import 'package:flutter_delivery_app/restaurant/component/restaurant_card.dart';
 import 'package:flutter_delivery_app/restaurant/model/restaurant_detail_model.dart';
 import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
@@ -56,18 +59,25 @@ class _RestaurantDetailScreenState
               renderProducts(
                 products: state.products,
               ),
-            const SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              sliver: SliverToBoxAdapter(
-                  child: RatingCard(
-                      avatarImage:
-                          AssetImage('/asset/img/logo/codefactory_logo.png'),
-                      images: [],
-                      rating: 3,
-                      email: 'jc@ksd.com',
-                      content: 'very good!!!!!')),
-            ),
+            if (ratingState is CursorPagination<RatingModel>)
+              renderRatings(models: ratingState.data),
           ],
+        ));
+  }
+
+  SliverPadding renderRatings({required List<RatingModel> models}) {
+    return SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (_, index) => Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: RatingCard.fromModel(
+                model: models[index],
+              ),
+            ),
+            childCount: models.length,
+          ),
         ));
   }
 
