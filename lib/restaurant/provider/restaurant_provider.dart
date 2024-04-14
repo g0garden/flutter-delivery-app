@@ -4,6 +4,7 @@ import 'package:flutter_delivery_app/common/provider/pagination_provider.dart';
 import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_delivery_app/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:collection/collection.dart';
 
 //우리가 받을 값은 RestaurantModel, family로 입력하는 값은 레스토랑 id
 final restaurantDetailProvider =
@@ -15,7 +16,7 @@ final restaurantDetailProvider =
     return null;
   }
 
-  return state.data.firstWhere((element) => element.id == id);
+  return state.data.firstWhereOrNull((element) => element.id == id);
 });
 
 //2. StateNotifier Provider에 연결
@@ -56,15 +57,27 @@ class RestaurantStateNotifier
 
     final resp = await repository.getRestaurantDetail(rid: id);
 
-    //[RestaurantModel(1), RestaurantModel(2),RestaurantModel(3)]
-    //id: 2인 모델의 Detail모델을 가져와라
-    // getRestaurantDetail(id:2)
-    //[RestaurantModel(1), RestaurantDetailModel(2),RestaurantModel(3)]
-    state = pState.copyWith(
-        data: pState.data
-            .map<RestaurantModel>(
-              (e) => e.id == id ? resp : e,
-            )
-            .toList());
+    if (pState.data.where((e) => e.id == id).isEmpty) {
+      ///case 2
+      ///case1에서는 기존에 있던 데이터만 쓰니까 더 있는데도 기존에 없었으면 무시해버리자나?
+      //[RestaurantModel(1), RestaurantModel(2),RestaurantModel(3)]
+      // 요청id:10
+      // list.where((e) => e.id == 10)) 데이터 없다하겠지
+      //데이터 없으면 그냥 캐시 끝에 데이터 추가해버리자 m1, m2,m3, m10
+      state = pState.copyWith(data: <RestaurantModel>[...pState.data, resp]);
+    } else {
+      /// case 1
+      //[RestaurantModel(1), RestaurantModel(2),RestaurantModel(3)]
+      //id: 2인 모델의 Detail모델을 가져와라
+      // getRestaurantDetail(id:2)
+      //[RestaurantModel(1), RestaurantDetailModel(2),RestaurantModel(3)]
+
+      state = pState.copyWith(
+          data: pState.data
+              .map<RestaurantModel>(
+                (e) => e.id == id ? resp : e,
+              )
+              .toList());
+    }
   }
 }
