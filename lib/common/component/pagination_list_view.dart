@@ -103,7 +103,7 @@ class _PaginationListViewState<T extends IModelWithId>
 
             final pItem = cp.data[index];
 
-            //말그래돌 index마다 그려줄 위젯임
+            //실질적으로 리스트(아이템)들이 렌더링 되는 부분
             return widget.itemBuilder(context, index, pItem);
           },
           separatorBuilder: (_, index) {

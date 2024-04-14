@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/common/component/pagination_list_view.dart';
-import 'package:flutter_delivery_app/common/model/cursor_pagination_model.dart';
-import 'package:flutter_delivery_app/common/utils/paginate_utils.dart';
 import 'package:flutter_delivery_app/restaurant/component/restaurant_card.dart';
-import 'package:flutter_delivery_app/restaurant/model/restaurant_model.dart';
 import 'package:flutter_delivery_app/restaurant/provider/restaurant_provider.dart';
 import 'package:flutter_delivery_app/restaurant/view/restaurant_detail_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RestaurantScreen extends StatelessWidget {
   @override
