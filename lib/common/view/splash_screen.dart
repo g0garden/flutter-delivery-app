@@ -11,6 +11,7 @@ import 'package:flutter_delivery_app/user/view/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'splash';
   const SplashScreen({super.key});
 
   @override
@@ -33,28 +34,28 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   void checkToken() async {
-    final storage = ref.read(secureStorageProvider);
-    final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
-    final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
+    // final storage = ref.read(secureStorageProvider);
+    // final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
+    // final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-    final dio = Dio();
+    // final dio = Dio();
 
-    try {
-      final resp = await dio.post('http://$ip/auth/token',
-          options: Options(headers: {
-            'authorization': 'Bearer $refreshToken',
-          }));
+    // try {
+    //   final resp = await dio.post('http://$ip/auth/token',
+    //       options: Options(headers: {
+    //         'authorization': 'Bearer $refreshToken',
+    //       }));
 
-      //refreshToken이 accessToken 정상 갱신 후 storage에 저장
-      await storage.write(
-          key: ACCESS_TOKEN_KEY, value: resp.data['accessToken']);
+    //   //refreshToken이 accessToken 정상 갱신 후 storage에 저장
+    //   await storage.write(
+    //       key: ACCESS_TOKEN_KEY, value: resp.data['accessToken']);
 
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => LoginScreen()), (route) => false);
-    } catch (e) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => RootTab()), (route) => false);
-    }
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute(builder: (_) => LoginScreen()), (route) => false);
+    // } catch (e) {
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute(builder: (_) => RootTab()), (route) => false);
+    // }
   }
 
   @override

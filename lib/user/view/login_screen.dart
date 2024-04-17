@@ -9,10 +9,13 @@ import 'package:flutter_delivery_app/common/const/data.dart';
 import 'package:flutter_delivery_app/common/layout/default_layout.dart';
 import 'package:flutter_delivery_app/common/secure_storage/secure_storage.dart';
 import 'package:flutter_delivery_app/common/view/root_tab.dart';
+import 'package:flutter_delivery_app/user/model/user_model.dart';
+import 'package:flutter_delivery_app/user/provider/user_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'login';
   const LoginScreen({super.key});
 
   @override
@@ -25,7 +28,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
+    final state = ref.watch(userMeProvider);
 
     return DefaultLayout(
         child: SingleChildScrollView(
@@ -62,34 +65,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 obscureText: true,
               ),
               ElevatedButton(
-                onPressed: () async {
-                  //final rawString = 'test@codefactory.ai:testtest';
-                  final rawString = '$username:$password';
-                  Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                //login중이면 로그인 버튼 못누르게!
+                onPressed: state is UserModelLoading
+                    ? null
+                    : () async {
+                        ref
+                            .read(userMeProvider.notifier)
+                            .login(username: username, password: password);
 
-                  String token = stringToBase64.encode(rawString);
+                        //final rawString = 'test@codefactory.ai:testtest';
+                        // final rawString = '$username:$password';
 
-                  final resp = await dio.post('http://$ip/auth/login',
-                      options: Options(headers: {
-                        'authorization': 'Basic $token',
-                      }));
+                        // final storage = ref.read(secureStorageProvider);
 
-                  final refreshToken = resp.data['refreshToken'];
-                  final accessToken = resp.data['accessToken'];
+                        // await storage.write(
+                        //     key: REFRESH_TOKEN_KEY, value: refreshToken);
+                        // await storage.write(
+                        //     key: ACCESS_TOKEN_KEY, value: accessToken);
 
-                  final storage = ref.read(secureStorageProvider);
-
-                  await storage.write(
-                      key: REFRESH_TOKEN_KEY, value: refreshToken);
-                  await storage.write(
-                      key: ACCESS_TOKEN_KEY, value: accessToken);
-
-                  //로그인 성공했으면 RootTab으로 이동
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => RootTab()));
-
-                  print(resp.data);
-                },
+                        //로그인 성공했으면 RootTab으로 이동
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) => RootTab()));
+                      },
                 style: ElevatedButton.styleFrom(backgroundColor: PRIMARY_COLOR),
                 child: const Text('로그인'),
               ),
