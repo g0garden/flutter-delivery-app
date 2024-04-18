@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_delivery_app/common/const/data.dart';
 import 'package:flutter_delivery_app/common/secure_storage/secure_storage.dart';
+import 'package:flutter_delivery_app/user/provider/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -9,15 +10,16 @@ final dioProvider = Provider<Dio>((ref) {
 
   final storage = ref.watch(secureStorageProvider);
 
-  dio.interceptors.add(CustomInterceptor(storage: storage));
+  dio.interceptors.add(CustomInterceptor(storage: storage, ref: ref));
 
   return dio;
 });
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
+  final Ref ref;
 
-  CustomInterceptor({required this.storage});
+  CustomInterceptor({required this.storage, required this.ref});
 
   //1) 요청보낼때
   // 요청 보낼때마다
@@ -104,7 +106,17 @@ class CustomInterceptor extends Interceptor {
         //화면에서는 이 성공적인 응답만 보고 에러난지 모를듯.
         return handler.resolve(response);
       } on DioException catch (e) {
-        //어떤 이유든 여기서 에러났으면, 더 이상 토큰 발급받을 상황 아니지
+        //어떤 이유든 여기서 에러났으면,
+        //(RefreshToken 만료..)더 이상 토큰 발급받을 상황 아니지 => 로그아웃 시켜줘야지 다시 로그인해서 받오
+
+        // a -> b -> a -> b -> ...
+        // userMeP -> dio -> userMeP -> dio ... 끊어줘야댐
+        //circular dependency error
+        //ref.read(userMeProvider.notifier).logout();
+
+        //우회해보자~
+        ref.read(authPrivider).logout();
+
         return handler.reject(e);
       }
     }

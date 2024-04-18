@@ -50,11 +50,15 @@ class AuthProvider extends ChangeNotifier {
             builder: (_, state) => LoginScreen())
       ];
 
+  void logout() {
+    ref.read(userMeProvider.notifier).logout();
+  }
+
   //redirect 로직!!
   String? redirectLogic(GoRouterState state) {
     final UserModelBase? user = ref.read(userMeProvider);
 
-    final logginIn = state.uri == '/login';
+    final logginIn = state.uri.toString() == '/login';
 
     //유저 정보 없는데
     //로그인 중이면 그대로 로그인페이지 있으면 되고
@@ -71,7 +75,7 @@ class AuthProvider extends ChangeNotifier {
     //홈으로 이동
 
     if (user is UserModel) {
-      return logginIn || state.uri == '/splash' ? '/' : null;
+      return logginIn || state.uri.toString() == '/splash' ? '/' : null;
     }
 
     //usermodelError

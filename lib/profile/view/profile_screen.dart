@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/common/layout/default_layout.dart';
-import 'package:flutter_delivery_app/user/provider/auth_provider.dart';
 import 'package:flutter_delivery_app/user/provider/user_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +14,7 @@ class ProfileScreen extends ConsumerWidget {
       onPressed: () {
         ref.read(userMeProvider.notifier).logout();
       },
-      child: Text('로그아웃'),
+      child: const Text('로그아웃'),
     )));
   }
 }
