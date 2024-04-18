@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/common/const/colors.dart';
 import 'package:flutter_delivery_app/product/model/product_model.dart';

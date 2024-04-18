@@ -5,10 +5,11 @@ import 'package:flutter_delivery_app/product/component/product_card.dart';
 import 'package:flutter_delivery_app/product/model/product_model.dart';
 import 'package:flutter_delivery_app/product/provider/product_provider.dart';
 import 'package:flutter_delivery_app/restaurant/view/restaurant_detail_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class ProductScreen extends StatelessWidget {
+  const ProductScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return PaginationListView<ProductModel>(

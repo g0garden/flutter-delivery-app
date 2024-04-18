@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_delivery_app/common/const/colors.dart';
-
 import 'package:collection/collection.dart';
+
+import 'package:flutter_delivery_app/common/const/colors.dart';
 import 'package:flutter_delivery_app/rating/model/rating_model.dart';
 
 class RatingCard extends StatelessWidget {

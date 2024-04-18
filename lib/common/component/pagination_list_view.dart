@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_delivery_app/common/model/cursor_pagination_model.dart';
 import 'package:flutter_delivery_app/common/model/model_with_id.dart';
 import 'package:flutter_delivery_app/common/provider/pagination_provider.dart';
